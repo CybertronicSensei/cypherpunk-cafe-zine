@@ -1,0 +1,146 @@
+/*
+ * zine.css
+ * Your 'hacker-zine' override for the Cypherpunk Café.
+ * We are at war with 'border-radius'.
+ * [cite: 771, 777]
+ */
+
+/* --- STEP 1: FONT IMPORT (The 'DOS' Font) --- */
+@import url('https://fonts.cdnfonts.com/css/perfect-dos-vga-437');
+/* [cite: 779] */
+
+/* --- STEP 2: ROOT OVERRIDE (The 'Monochrome' Palette) --- */
+/*
+ * We hijack astro-paper's CSS variables to force our palette.
+ * [cite: 780]
+ */
+:root {
+  --theme-bg: #000000; /* Pure black background */ /* [cite: 781] */
+  --theme-text: #33FF00; /* Classic "mossy green" phosphor text */ /* [cite: 781] */
+  --theme-link: #33FF00; /* [cite: 782] */
+  --theme-accent: #33FF00; /* [cite: 782] */
+  --theme-border: #33FF00; /* [cite: 782] */
+  --theme-hover: #66FF66; /* A slightly brighter green for hover */ /* [cite: 783] */
+  --theme-code-bg: #1a1a1a; /* A dark grey for code blocks */ /* [cite: 784] */
+  --theme-code: #33FF00; /* [cite: 785] */
+}
+
+/* --- STEP 3: GLOBAL OVERRIDE (The 'Nuke') --- */
+/*
+ * Enforce the font and kill all modern 'fluff'.
+ * 'Perfect DOS VGA 437' is the font name from the import.
+ * [cite: 786-787]
+ */
+body {
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace !important; /* [cite: 787] */
+  background-color: var(--theme-bg) !important; /* [cite: 787] */
+  color: var(--theme-text) !important; /* [cite: 787] */
+  line-height: 1.7;
+  font-size: 1.1rem; /* [cite: 788] */
+}
+
+/* KILL ALL MODERN FLUFF. NO MERCY. */
+* {
+  border-radius: 0 !important; /* [cite: 789] */
+  box-shadow: none !important; /* [cite: 789] */
+  text-shadow: none !important; /* [cite: 789] */
+  /* Disable astro-paper's smooth scroll for a '90s "jump" feel */
+  scroll-behavior: auto !important; /* [cite: 790] */
+}
+
+/* --- STEP 4: LAYOUT & ASCII ART (The 'NFO' File) --- */
+/*
+ * Force a single-column, 80-character (zine) layout.
+ * [cite: 792]
+ */
+main {
+  max-width: 800px; /* Classic 80-char width */ /* [cite: 793] */
+  margin: 0 auto; /* [cite: 793] */
+  padding: 1rem; /* [cite: 793] */
+}
+
+/* THIS IS FOR YOUR ASCII ART HEADER */
+pre {
+  font-family: 'Perfect DOS VGA 437', 'Courier New', monospace; /* [cite: 795] */
+  color: var(--theme-accent); /* [cite: 795] */
+  overflow-x: auto; /* [cite: 795] */
+  font-size: 1rem; /* [cite: 795] */
+  line-height: 1.2; /* [cite: 795] */
+  text-align: left;
+  border: 1px solid var(--theme-border); /* [cite: 796] */
+  padding: 1rem; /* [cite: 796] */
+  background: var(--theme-code-bg); /* Dark grey, so it stands out */ /* [cite: 797] */
+  margin-bottom: 2rem; /* [cite: 798] */
+}
+
+/* --- STEP 5: HEADINGS & TEXT (The 'Zine' Style) --- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--theme-accent); /* [cite: 799] */
+  border-bottom: 1px solid var(--theme-border); /* [cite: 799] */
+  padding-bottom: 5px; /* [cite: 799] */
+  font-weight: normal; /* DOS fonts don't have bold */ /* [cite: 799] */
+  text-transform: uppercase; /* Classic zine/hacker style */ /* [cite: 800] */
+}
+
+p {
+  margin-bottom: 1.5rem; /* [cite: 800] */
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--theme-border); /* [cite: 801] */
+  margin: 2rem 0; /* [cite: 801] */
+}
+
+/* --- STEP 6: BUTTONS & LINKS (The 'Hybrid' Hack) --- */
+/*
+ * We keep the Astro theme's 'button' class but reskin it
+ * to look like a classic [ BRACKET ] link.
+ * [cite: 802]
+ */
+
+/* First, style normal links */
+a {
+  color: var(--theme-link);
+  text-decoration: none; /* No underlines, 90s style */ /* [cite: 803] */
+  border-bottom: 1px dashed var(--theme-link); /* [cite: 803] */
+}
+
+a:hover {
+  color: var(--theme-hover);
+  border-bottom-style: solid;
+  background-color: rgba(51, 255, 0, 0.1); /* Faint green glow */ /* [cite: 804] */
+}
+
+/*
+ * Now, style the buttons.
+ * In your Astro file, you will use:
+ * <a href="..." class="btn">...</a>
+ * This 'btn' class is what astro-paper uses.
+ * [cite: 805, 806]
+ */
+.btn {
+  border: 1px solid var(--theme-border) !important; /* [cite: 807] */
+  padding: 0.5rem 1rem !important; /* [cite: 807] */
+  color: var(--theme-text) !important; /* [cite: 807] */
+  text-decoration: none !important; /* [cite: 807] */
+  background-color: var(--theme-bg) !important; /* [cite: 807] */
+  margin-top: 1rem; /* [cite: 807] */
+  font-weight: normal !important; /* [cite: 807] */
+  font-size: 1rem !important; /* [cite: 807] */
+  text-transform: uppercase; /* [cite: 807] */
+}
+
+.btn::before {
+  content: "[ "; /* [cite: 808] */
+}
+
+.btn::after {
+  content: " ]"; /* [cite: 808] */
+}
+
+.btn:hover {
+  background-color: var(--theme-accent) !important; /*  */
+  color: var(--theme-bg) !important; /*  */
+  border-bottom: 1px dashed var(--theme-border) !important;
+}
