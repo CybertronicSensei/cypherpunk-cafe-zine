@@ -1,0 +1,264 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Cypherpunk Café" description="The Exit & Build Sanctuary">
+  
+  <style>
+    /* IMPORT THE DOS FONT */
+    @import url('https://fonts.cdnfonts.com/css/perfect-dos-vga-437');
+
+    :root {
+      --bg-color: #000000;
+      --term-green: #33FF00;
+      --term-dim: #008F11;
+      --font-stack: 'Perfect DOS VGA 437', monospace;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--term-green);
+      font-family: var(--font-stack);
+      margin: 0;
+      padding: 20px;
+      overflow-x: hidden;
+      font-size: 16px;
+    }
+
+    /* THE NFO BORDER CONTAINER */
+    .nfo-box {
+      max-width: 900px;
+      margin: 0 auto;
+      border: 4px double var(--term-green);
+      padding: 10px;
+      box-shadow: 0 0 10px var(--term-dim);
+      background-color: #050505;
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ASCII HEADER (RESPONSIVE FIX) */
+    .ascii-art {
+      font-family: var(--font-stack);
+      white-space: pre;       /* Forces the art to keep its shape */
+      color: var(--term-green);
+      text-align: center;
+      line-height: 1;         /* Tightens vertical gaps */
+      margin-bottom: 20px;
+      font-weight: bold;
+
+      /* THE RESPONSIVE MAGIC: Locks font size to screen width */
+      font-size: min(14px, 2.2vw); 
+      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* IRC WINDOW STYLING */
+    .irc-window {
+      flex-grow: 1;
+      border-top: 2px solid var(--term-green);
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .irc-header {
+      background: var(--term-green);
+      color: #000;
+      padding: 2px 5px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* THE CHAT LOG */
+    #chat-log {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .msg-line {
+      margin-bottom: 8px;
+      line-height: 1.5;
+      display: block;
+    }
+
+    .timestamp {
+      color: var(--term-dim);
+      margin-right: 8px;
+    }
+
+    .username {
+      color: #FFF;
+      margin-right: 5px;
+    }
+
+    /* LINKS / BUTTONS */
+    .file-transfer {
+      margin-top: 20px;
+      border: 1px dashed var(--term-green);
+      padding: 10px;
+      display: block;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+
+    .file-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px dotted var(--term-dim);
+      padding-bottom: 5px;
+    }
+
+    .file-row:last-child {
+      border-bottom: none;
+    }
+
+    a.download-link {
+      color: #000;
+      background: var(--term-green);
+      text-decoration: none;
+      padding: 2px 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    a.download-link:hover {
+      background: #FFF;
+      color: #000;
+    }
+
+    /* BLINKING CURSOR */
+    .cursor::after {
+      content: "█";
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* MOBILE TWEAKS */
+    @media (max-width: 600px) {
+      .nfo-box { border: 2px double var(--term-green); padding: 5px; }
+      .file-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+      a.download-link { width: 100%; text-align: center; }
+    }
+  </style>
+
+  <main class="nfo-box">
+    
+    <div class="ascii-art">
+ ██████╗██╗   ██╗██████╗ ██╗  ██╗███████╗██████╗ ██████╗ ██╗   ██╗███╗   ██╗██╗  ██╗
+██╔════╝╚██╗ ██╔╝██╔══██╗██║  ██║██╔════╝██╔══██╗██╔══██╗██║   ██║████╗  ██║██║ ██╔╝
+██║      ╚████╔╝ ██████╔╝███████║█████╗  ██████╔╝██████╔╝██║   ██║██╔██╗ ██║█████╔╝ 
+██║       ╚██╔╝  ██╔═══╝ ██╔══██║██╔══╝  ██╔══██╗██╔═══╝ ██║   ██║██║╚██╗██║██╔═██╗ 
+╚██████╗   ██║   ██║     ██║  ██║███████╗██║  ██║██║     ╚██████╔╝██║ ╚████║██║  ██╗
+ ╚═════╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝
+                 [ EST. 2025 ] [ OREGON NODE ] [ 1337 ]
+    </div>
+
+    <div class="irc-window">
+      <div class="irc-header">
+        [ Topic: Exit the Matrix. Build the Fortress. ]
+      </div>
+
+      <div id="chat-container">
+        <ul id="chat-log">
+          </ul>
+        <div class="msg-line">
+          <span class="timestamp">[NOW]</span>
+          <span class="username">&lt;anonymous&gt;</span>
+          <span id="typing-area" class="cursor"></span>
+        </div>
+      </div>
+
+      <div id="link-container" class="file-transfer" style="display:none;">
+        <div style="text-align:center; margin-bottom:10px;">[ AVAILABLE CONNECTIONS ]</div>
+        
+        <div class="file-row">
+          <span>> PROTOCOL_OFFENSE (AI_LIBERATION).exe</span>
+          <a href="[TALLY_FORM_A_LINK]" target="_blank" class="download-link">[ INITIALIZE ]</a>
+        </div>
+
+        <div class="file-row">
+          <span>> PROTOCOL_DEFENSE (OPT_OUT).sh</span>
+          <a href="[TALLY_FORM_E_LINK]" target="_blank" class="download-link">[ HARDEN SYSTEM ]</a>
+        </div>
+
+        <div class="file-row">
+          <span>> SANCTUARY_ACCESS.key</span>
+          <a href="[TALLY_FORM_B_LINK]" target="_blank" class="download-link">[ SOLVE RIDDLE ]</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script is:inline>
+    const scriptLines = [
+      "Initializing secure connection...",
+      "Connection established to #cypherpunk-cafe.",
+      "...",
+      "My name is [Redacted]. Some know me as 'Wizard'.",
+      "I've spent a lifetime inside the source code of the world.",
+      "I've seen the traps. The $2,000 courses. The 'free' tools.",
+      "They are systems designed to lock you in.",
+      "...",
+      "The real hack isn't code. It's SOVEREIGNTY.",
+      "We are launching the Exit & Build protocols.",
+      "This is not a course. This is a sanctuary.",
+      "Choose your path below.",
+      "EOF."
+    ];
+
+    const typingSpeed = 30; 
+    const lineDelay = 350;
+    
+    let lineIndex = 0;
+    let charIndex = 0;
+    const typingArea = document.getElementById('typing-area');
+    const chatLog = document.getElementById('chat-log');
+    const linkContainer = document.getElementById('link-container');
+
+    function typeWriter() {
+      if (lineIndex < scriptLines.length) {
+        const currentLine = scriptLines[lineIndex];
+        if (charIndex < currentLine.length) {
+          typingArea.textContent += currentLine.charAt(charIndex);
+          charIndex++;
+          setTimeout(typeWriter, typingSpeed);
+        } else {
+          commitLine();
+          lineIndex++;
+          charIndex = 0;
+          setTimeout(typeWriter, lineDelay);
+        }
+      } else {
+        typingArea.classList.remove('cursor');
+        linkContainer.style.display = 'block';
+        setTimeout(() => { linkContainer.style.opacity = '1'; }, 50);
+      }
+    }
+
+    function commitLine() {
+      const li = document.createElement('li');
+      li.className = 'msg-line';
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric" });
+      li.innerHTML = `<span class="timestamp">[${time}]</span><span class="username">&lt;anonymous&gt;</span><span class="message">${typingArea.textContent}</span>`;
+      chatLog.appendChild(li);
+      typingArea.textContent = '';
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    window.onload = function() { setTimeout(typeWriter, 1000); };
+  </script>
+</Layout>
