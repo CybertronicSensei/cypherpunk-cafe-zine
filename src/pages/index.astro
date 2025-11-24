@@ -1,114 +1,280 @@
 ---
 // src/pages/index.astro
-// This is your main "zine" landing page.
 import Layout from '../layouts/Layout.astro';
-// [cite: 817]
 ---
 
-<Layout
-  title="Cypherpunk Café"
-  description="This is not a course. This is a sanctuary."
->
-  <main>
-    <pre>
-░█▀▀░█░█░█▀█░█░█░█▀▀░█▀▄░█▀█░█░█░█▀█░█░█░░░█▀▀░█▀█░█▀▀░█▀▀
-░█░░░░█░░█▀▀░█▀█░█▀▀░█▀▄░█▀▀░█░█░█░█░█▀▄░░░█░░░█▀█░█▀▀░█▀▀
-░▀▀▀░░▀░░▀░░░▀░▀░▀▀▀░▀░▀░▀░░░▀▀▀░▀░▀░▀░▀░░░▀▀▀░▀░▀░▀░░░▀▀▀
-    </pre>
+<Layout title="Cypherpunk Café" description="The Exit & Build Sanctuary">
+  
+  <style>
+    /* IMPORT THE DOS FONT */
+    @import url('https://fonts.cdnfonts.com/css/perfect-dos-vga-437');
 
-    <section id="origin-story">
-      <h2>The 'Exit & Build' Playbook</h2>
-      <p>
-        My name is [Your Name]. In other circles, I'm known by other handles.
-        [cite: 818]
-      </p>
-      <p>
-        I'm an ethical hacker. My entire life has been a deep dive into the
-        source code of the systems that run our world. [cite: 819] I've seen how the
-        digital fortress was built. And I've watched as *our*
-        counter-culture, our desire for freedom, gets co-opted, packaged, and
-        sold back to us as a corporate product. [cite: 820]
-      </p>
-      <p>
-        Here's the truth: The *real* hack isn't just about code. It's about
-        <strong>sovereignty</strong>. [cite: 822]
-      </p>
-      <p>
-        The 'AI gurus' want to sell you a $2,000 system that *locks* you in. Big
-        Tech wants to give you 'free' tools that *lock* you in. Both are a trap.
-        [cite: 823] I'm here to give you the keys. The *real* source code. [cite: 824]
-      </p>
-      <p>
-        The <strong>Cypherpunk Café</strong> is our 'Exit.' [cite: 825]
-      </p>
-      <p>
-        The <strong>'AI Liberation Playbook'</strong> is our first 'Build.'
-        [cite: 826]
-      </p>
-    </section>
+    :root {
+      --bg-color: #000000;
+      --term-green: #33FF00;
+      --term-dim: #008F11;
+      --font-stack: 'Perfect DOS VGA 437', monospace;
+    }
 
-    <hr />
+    body {
+      background-color: var(--bg-color);
+      color: var(--term-green);
+      font-family: var(--font-stack);
+      margin: 0;
+      padding: 20px;
+      overflow-x: hidden;
+      font-size: 16px;
+    }
 
-    <section id="the-doors">
-      <h2>Find Your Door</h2>
+    /* THE NFO BORDER CONTAINER */
+    /* mimicks the ╔════╗ look using standard CSS double borders */
+    .nfo-box {
+      max-width: 900px;
+      margin: 0 auto;
+      border: 4px double var(--term-green);
+      padding: 10px;
+      box-shadow: 0 0 10px var(--term-dim);
+      background-color: #050505;
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-      <div>
-        <h3>[DOOR #1: THE GLOBAL 'LIVE HACK']</h3>
-        <p>
-          Join the free, 90-minute 'AI Liberation' live hack. I'm giving away
-          the *entire* open-source playbook to automate your business for $0.
-          [cite: 827] This is the "how-to" for the whole world. [cite: 828]
-        </p>
-        <a
-          href="https://tally.so/r/gDD9Xl"
-          class="btn"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Register for the 'Live Hack'
-        </a>
+    /* ASCII HEADER */
+    .ascii-art {
+      font-family: var(--font-stack);
+      white-space: pre;
+      color: var(--term-green);
+      text-align: center;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      font-weight: bold;
+    }
+
+    /* IRC WINDOW STYLING */
+    .irc-window {
+      flex-grow: 1;
+      border-top: 2px solid var(--term-green);
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .irc-header {
+      background: var(--term-green);
+      color: #000;
+      padding: 2px 5px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* THE CHAT LOG */
+    #chat-log {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .msg-line {
+      margin-bottom: 8px;
+      line-height: 1.5;
+      display: block; /* Ensure lines break */
+    }
+
+    .timestamp {
+      color: var(--term-dim);
+      margin-right: 8px;
+    }
+
+    .username {
+      color: #FFF; /* White for the user to pop */
+      margin-right: 5px;
+    }
+
+    /* LINKS / BUTTONS AS 'FILE TRANSFERS' */
+    .file-transfer {
+      margin-top: 20px;
+      border: 1px dashed var(--term-green);
+      padding: 10px;
+      display: block; /* Hidden initially, controlled by JS */
+      opacity: 0; /* Fade in effect */
+      transition: opacity 1s ease-in;
+    }
+
+    .file-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px dotted var(--term-dim);
+      padding-bottom: 5px;
+    }
+
+    .file-row:last-child {
+      border-bottom: none;
+    }
+
+    a.download-link {
+      color: #000;
+      background: var(--term-green);
+      text-decoration: none;
+      padding: 2px 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    a.download-link:hover {
+      background: #FFF;
+      color: #000;
+    }
+
+    /* BLINKING CURSOR */
+    .cursor::after {
+      content: "█";
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* MOBILE TWEAKS */
+    @media (max-width: 600px) {
+      .ascii-art { font-size: 0.6rem; }
+      .nfo-box { border: 2px double var(--term-green); padding: 5px; }
+    }
+  </style>
+
+  <main class="nfo-box">
+    
+    <div class="ascii-art">
+  ░█▀▀░█░█░█▀█░█░█░█▀▀░█▀▄░█▀█░█░█░█▀█░█░█░░░█▀▀░█▀█░█▀▀░█▀▀
+  ░█░░░░█░░█▀▀░█▀█░█▀▀░█▀▄░█▀▀░█░█░█░█░█▀▄░░░█░░░█▀█░█▀▀░█▀▀
+  ░▀▀▀░░▀░░▀░░░▀░▀░▀▀▀░▀░▀░▀░░░▀▀▀░▀░▀░▀░▀░░░▀▀▀░▀░▀░▀░░░▀▀▀
+           [ EST. 2025 ] [ OREGON NODE ] [ 1337 ]
+    </div>
+
+    <div class="irc-window">
+      <div class="irc-header">
+        [ Topic: Exit the Matrix. Build the Fortress. ]
       </div>
 
-      <br />
-      <div>
-        <h3>[DOOR #2: THE LOCAL CAFÉ (OREGON)]</h3>
-        <p>
-          This is the in-person sanctuary. This is for the local Southern
-          Oregon crew only. [cite: 829] To join the private Telegram and get the address
-          for our first meetup, you must first pass the initiation test. [cite: 830]
-        </p>
-        <a
-          href="https://tally.so/r/Y554b5"
-          class="btn"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Solve the Riddle. Enter the Café.
-        </a>
+      <div id="chat-container">
+        <ul id="chat-log">
+          </ul>
+        <div class="msg-line">
+          <span class="timestamp">[NOW]</span>
+          <span class="username">&lt;anonymous&gt;</span>
+          <span id="typing-area" class="cursor"></span>
+        </div>
       </div>
-    </section>
 
-    <hr />
+      <div id="link-container" class="file-transfer" style="display:none;">
+        <div style="text-align:center; margin-bottom:10px;">[ AVAILABLE CONNECTIONS ]</div>
+        
+        <div class="file-row">
+          <span>> PROTOCOL_OFFENSE (AI_LIBERATION).exe</span>
+          <a href="https://tally.so/r/YOUR_FORM_A" target="_blank" class="download-link">[ INITIALIZE ]</a>
+        </div>
 
-    <section id="the-hint">
-      <h2>Coming Soon: The 'Sovereign Presence' Workshop</h2>
-      <p>
-        You're looking at it. This site is hosted on a decentralized,
-        censorship-resistant domain. It's built on an open-source, Git-based
-        workflow. It's 100% sovereign. [cite: 832-833]
-      </p>
-      <p>
-        In this future lab, I'll teach you how I built it, click-by-click.
-        [cite: 834]
-      </p>
-      <a
-        href="https://tally.so/r/PddzN5"
-        class="btn"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Join the Waitlist
-      </a>
-    </section>
+        <div class="file-row">
+          <span>> PROTOCOL_DEFENSE (OPT_OUT).sh</span>
+          <a href="https://tally.so/r/YOUR_FORM_E" target="_blank" class="download-link">[ HARDEN SYSTEM ]</a>
+        </div>
+
+        <div class="file-row">
+          <span>> SANCTUARY_ACCESS.key</span>
+          <a href="https://tally.so/r/YOUR_FORM_B" target="_blank" class="download-link">[ SOLVE RIDDLE ]</a>
+        </div>
+      </div>
+
+    </div>
   </main>
+
+  <script is:inline>
+    // The Manifesto (Broken into lines for the IRC look)
+    const scriptLines = [
+      "Initializing secure connection...",
+      "Connection established to #cypherpunk-cafe.",
+      "...",
+      "My name is [Redacted]. Some know me as 'Wizard'.",
+      "I've spent a lifetime inside the source code of the world.",
+      "I've seen the traps. The $2,000 courses. The 'free' tools.",
+      "They are systems designed to lock you in.",
+      "...",
+      "The real hack isn't code. It's SOVEREIGNTY.",
+      "We are launching the Exit & Build protocols.",
+      "This is not a course. This is a sanctuary.",
+      "Choose your path below.",
+      "EOF."
+    ];
+
+    const typingSpeed = 35; // ms per char (adjust for speed)
+    const lineDelay = 400;  // ms between lines
+    
+    let lineIndex = 0;
+    let charIndex = 0;
+    const typingArea = document.getElementById('typing-area');
+    const chatLog = document.getElementById('chat-log');
+    const linkContainer = document.getElementById('link-container');
+
+    function typeWriter() {
+      if (lineIndex < scriptLines.length) {
+        const currentLine = scriptLines[lineIndex];
+
+        if (charIndex < currentLine.length) {
+          // Type next character
+          typingArea.textContent += currentLine.charAt(charIndex);
+          charIndex++;
+          setTimeout(typeWriter, typingSpeed);
+        } else {
+          // Line finished. Move it to the log and clear typing area.
+          commitLine();
+          lineIndex++;
+          charIndex = 0;
+          setTimeout(typeWriter, lineDelay);
+        }
+      } else {
+        // Script finished. Show links.
+        typingArea.classList.remove('cursor'); // Stop blinking
+        linkContainer.style.display = 'block';
+        // Small timeout to allow display:block to render before opacity transition
+        setTimeout(() => {
+          linkContainer.style.opacity = '1';
+        }, 50);
+      }
+    }
+
+    function commitLine() {
+      // Create a new list item for the finished line
+      const li = document.createElement('li');
+      li.className = 'msg-line';
+      
+      // Timestamp
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: "numeric", minute: "numeric" });
+      
+      li.innerHTML = `
+        <span class="timestamp">[${time}]</span>
+        <span class="username">&lt;anonymous&gt;</span>
+        <span class="message">${typingArea.textContent}</span>
+      `;
+      
+      // Add to log
+      chatLog.appendChild(li);
+      
+      // Clear the typing input line
+      typingArea.textContent = '';
+      
+      // Auto-scroll to bottom
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    // Start the hack
+    window.onload = function() {
+      setTimeout(typeWriter, 1000);
+    };
+  </script>
 </Layout>
+
