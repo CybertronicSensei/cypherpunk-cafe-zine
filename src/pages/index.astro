@@ -6,7 +6,7 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="Cypherpunk Café" description="The Exit & Build Sanctuary">
   
   <style>
-    /* IMPORT THE DOS FONT */
+    /* --- THE KERNEL: CORE VARIABLES --- */
     @import url('https://fonts.cdnfonts.com/css/perfect-dos-vga-437');
 
     :root {
@@ -14,97 +14,115 @@ import Layout from '../layouts/Layout.astro';
       --term-green: #33FF00;
       --term-dim: #008F11;
       --font-stack: 'Perfect DOS VGA 437', monospace;
+      --crt-scanline: rgba(18, 16, 16, 0.1);
     }
+
+    /* --- GLOBAL RESET --- */
+    * { box-sizing: border-box; }
 
     body {
       background-color: var(--bg-color);
       color: var(--term-green);
       font-family: var(--font-stack);
       margin: 0;
-      padding: 20px;
-      overflow-x: hidden;
-      font-size: 16px;
-    }
-
-    /* THE NFO BORDER CONTAINER */
-    .nfo-box {
-      max-width: 900px;
-      margin: 0 auto;
-      border: 4px double var(--term-green);
-      padding: 10px;
-      box-shadow: 0 0 10px var(--term-dim);
-      background-color: #050505;
-      min-height: 90vh;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
-    }
-
-    /* ASCII HEADER (RESPONSIVE FIX) */
-    .ascii-art {
-      font-family: var(--font-stack);
-      white-space: pre;       /* Forces the art to keep its shape */
-      color: var(--term-green);
-      text-align: center;
-      line-height: 1;         /* Tightens vertical gaps */
-      margin-bottom: 20px;
-      font-weight: bold;
-
-      /* THE RESPONSIVE MAGIC: Locks font size to screen width */
-      font-size: min(14px, 2.2vw); 
-      
-      display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
 
-    /* IRC WINDOW STYLING */
-    .irc-window {
-      flex-grow: 1;
-      border-top: 2px solid var(--term-green);
-      padding-top: 10px;
+    /* --- THE TERMINAL CONTAINER --- */
+    .nfo-box {
+      width: 100%;
+      max-width: 900px;
+      height: 90vh;
+      border: 4px double var(--term-green);
+      background-color: #050505;
+      box-shadow: 0 0 15px var(--term-dim);
       display: flex;
       flex-direction: column;
+      position: relative;
+      animation: flicker 0.15s infinite;
     }
 
+    /* --- RESPONSIVE LOGIC --- */
+    .ascii-desktop { display: block; }
+    .ascii-mobile { display: none; }
+    
+    .irc-window {
+      padding: 10px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--term-green) #000;
+      flex-grow: 1;
+    }
+
+    /* MOBILE MODE (< 800px) */
+    @media (max-width: 800px) {
+      .nfo-box {
+        max-width: 100%;
+        height: 100vh;
+        border: none;
+        border-top: 2px solid var(--term-green);
+        border-bottom: 2px solid var(--term-green);
+      }
+      .ascii-desktop { display: none; }
+      .ascii-mobile { display: block; }
+      body { font-size: 14px; }
+    }
+
+    /* --- ASCII ART ENGINE --- */
+    .ascii-art {
+      font-family: var(--font-stack);
+      white-space: pre;
+      color: var(--term-green);
+      text-align: center;
+      line-height: 1;
+      margin: 15px 0;
+      font-weight: bold;
+      flex-shrink: 0;
+      
+      /* Dynamic Scaling */
+      font-size: clamp(8px, 2vw, 14px); 
+    }
+
+    /* --- IRC CHAT ENGINE --- */
     .irc-header {
       background: var(--term-green);
       color: #000;
-      padding: 2px 5px;
-      margin-bottom: 10px;
+      padding: 4px 8px;
       font-weight: bold;
       text-transform: uppercase;
+      font-size: 0.9em;
+      flex-shrink: 0;
     }
 
-    /* THE CHAT LOG */
     #chat-log {
       list-style: none;
       padding: 0;
       margin: 0;
+      margin-bottom: 20px;
     }
 
     .msg-line {
-      margin-bottom: 8px;
-      line-height: 1.5;
+      margin-bottom: 10px;
+      line-height: 1.4;
       display: block;
+      word-wrap: break-word;
     }
 
-    .timestamp {
-      color: var(--term-dim);
-      margin-right: 8px;
-    }
+    .timestamp { color: var(--term-dim); margin-right: 8px; }
+    .username { color: #FFF; margin-right: 5px; }
 
-    .username {
-      color: #FFF;
-      margin-right: 5px;
-    }
-
-    /* LINKS / BUTTONS */
+    /* --- LINKS --- */
     .file-transfer {
       margin-top: 20px;
       border: 1px dashed var(--term-green);
       padding: 10px;
-      display: block;
+      display: none;
       opacity: 0;
       transition: opacity 1s ease-in;
     }
@@ -113,67 +131,69 @@ import Layout from '../layouts/Layout.astro';
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      padding: 8px 0;
       border-bottom: 1px dotted var(--term-dim);
-      padding-bottom: 5px;
     }
-
-    .file-row:last-child {
-      border-bottom: none;
+    
+    @media (max-width: 600px) {
+      .file-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+      a.download-link { width: 100%; text-align: center; display: block;}
     }
 
     a.download-link {
       color: #000;
       background: var(--term-green);
       text-decoration: none;
-      padding: 2px 8px;
+      padding: 4px 12px;
       font-weight: bold;
-      cursor: pointer;
+      text-transform: uppercase;
     }
-    
-    a.download-link:hover {
-      background: #FFF;
-      color: #000;
+    a.download-link:hover { background: #FFF; }
+
+    /* --- FOOTER --- */
+    .sys-status {
+      margin-top: auto;
+      border-top: 1px solid var(--term-dim);
+      padding: 5px;
+      font-size: 0.8rem;
+      color: var(--term-dim);
+      display: flex;
+      justify-content: space-between;
     }
 
-    /* BLINKING CURSOR */
-    .cursor::after {
-      content: "█";
-      animation: blink 1s step-end infinite;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-
-    /* MOBILE TWEAKS */
-    @media (max-width: 600px) {
-      .nfo-box { border: 2px double var(--term-green); padding: 5px; }
-      .file-row { flex-direction: column; align-items: flex-start; gap: 5px; }
-      a.download-link { width: 100%; text-align: center; }
+    /* --- ANIMATIONS --- */
+    .cursor::after { content: "█"; animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @keyframes flicker { 
+      0% { opacity: 0.97; } 50% { opacity: 1; } 100% { opacity: 0.98; } 
     }
   </style>
 
   <main class="nfo-box">
     
-    <div class="ascii-art">
+    <div class="ascii-art ascii-desktop">
  ██████╗██╗   ██╗██████╗ ██╗  ██╗███████╗██████╗ ██████╗ ██╗   ██╗███╗   ██╗██╗  ██╗
 ██╔════╝╚██╗ ██╔╝██╔══██╗██║  ██║██╔════╝██╔══██╗██╔══██╗██║   ██║████╗  ██║██║ ██╔╝
 ██║      ╚████╔╝ ██████╔╝███████║█████╗  ██████╔╝██████╔╝██║   ██║██╔██╗ ██║█████╔╝ 
 ██║       ╚██╔╝  ██╔═══╝ ██╔══██║██╔══╝  ██╔══██╗██╔═══╝ ██║   ██║██║╚██╗██║██╔═██╗ 
 ╚██████╗   ██║   ██║     ██║  ██║███████╗██║  ██║██║     ╚██████╔╝██║ ╚████║██║  ██╗
  ╚═════╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝
-                 [ EST. 2025 ] [ OREGON NODE ] [ 1337 ]
+    </div>
+
+    <div class="ascii-art ascii-mobile">
+▄▖    ▌     ▄▖    ▌ ▄▖  ▐▘  
+▌ ▌▌▛▌▛▌█▌▛▘▙▌▌▌▛▌▙▘▌ ▀▌▜▘█▌
+▙▖▙▌▙▌▌▌▙▖▌ ▌ ▙▌▌▌▛▖▙▖█▌▐ ▙▖
+  ▄▌▌                       
     </div>
 
     <div class="irc-window">
       <div class="irc-header">
-        [ Topic: Exit the Matrix. Build the Fortress. ]
+        [ MODE: SECURE ] [ CHANNEL: #EXIT_AND_BUILD ]
       </div>
 
       <div id="chat-container">
-        <ul id="chat-log">
-          </ul>
+        <ul id="chat-log"></ul>
         <div class="msg-line">
           <span class="timestamp">[NOW]</span>
           <span class="username">&lt;anonymous&gt;</span>
@@ -181,48 +201,53 @@ import Layout from '../layouts/Layout.astro';
         </div>
       </div>
 
-      <div id="link-container" class="file-transfer" style="display:none;">
-        <div style="text-align:center; margin-bottom:10px;">[ AVAILABLE CONNECTIONS ]</div>
+      <div id="link-container" class="file-transfer">
+        <div style="text-align:center; margin-bottom:10px; color: #FFF;">[ AVAILABLE CONNECTIONS ]</div>
         
         <div class="file-row">
           <span>> PROTOCOL_OFFENSE (AI_LIBERATION).exe</span>
-          <a href="[TALLY_FORM_A_LINK]" target="_blank" class="download-link">[ INITIALIZE ]</a>
+          <a href="https://tally.so/r/gDD9Xl" target="_blank" class="download-link">[ INITIALIZE ]</a>
         </div>
 
         <div class="file-row">
           <span>> PROTOCOL_DEFENSE (OPT_OUT).sh</span>
-          <a href="[TALLY_FORM_E_LINK]" target="_blank" class="download-link">[ HARDEN SYSTEM ]</a>
+          <a href="https://tally.so/r/PddzN5" target="_blank" class="download-link">[ HARDEN ]</a>
         </div>
 
         <div class="file-row">
           <span>> SANCTUARY_ACCESS.key</span>
-          <a href="[TALLY_FORM_B_LINK]" target="_blank" class="download-link">[ SOLVE RIDDLE ]</a>
+          <a href="https://tally.so/r/Y554b5" target="_blank" class="download-link">[ SOLVE ]</a>
         </div>
       </div>
-
     </div>
+
+    <div class="sys-status">
+      <span id="sys-res">RES: DETECTING...</span>
+      <span>MEM: OK</span>
+      <span>NET: ENCRYPTED</span>
+    </div>
+
   </main>
 
   <script is:inline>
+    // TYPEWRITER ENGINE
     const scriptLines = [
-      "Initializing secure connection...",
-      "Connection established to #cypherpunk-cafe.",
+      "Boot sequence initiated...",
+      "Resolving host... cypherpunk.fyi found.",
       "...",
-      "My name is [Redacted]. Some know me as 'Wizard'.",
-      "I've spent a lifetime inside the source code of the world.",
-      "I've seen the traps. The $2,000 courses. The 'free' tools.",
-      "They are systems designed to lock you in.",
+      "Identity: [Redacted]. Handle: 'Wizard'.",
+      "Mission: Breaking the digital siege.",
+      "Status: The systems are rigged. The 'free' tools are traps.",
       "...",
       "The real hack isn't code. It's SOVEREIGNTY.",
       "We are launching the Exit & Build protocols.",
       "This is not a course. This is a sanctuary.",
-      "Choose your path below.",
+      "Choose your path.",
       "EOF."
     ];
 
-    const typingSpeed = 30; 
-    const lineDelay = 350;
-    
+    const typingSpeed = 25; 
+    const lineDelay = 250;
     let lineIndex = 0;
     let charIndex = 0;
     const typingArea = document.getElementById('typing-area');
@@ -245,7 +270,10 @@ import Layout from '../layouts/Layout.astro';
       } else {
         typingArea.classList.remove('cursor');
         linkContainer.style.display = 'block';
-        setTimeout(() => { linkContainer.style.opacity = '1'; }, 50);
+        setTimeout(() => { 
+          linkContainer.style.opacity = '1'; 
+          linkContainer.scrollIntoView({ behavior: "smooth" });
+        }, 50);
       }
     }
 
@@ -256,9 +284,22 @@ import Layout from '../layouts/Layout.astro';
       li.innerHTML = `<span class="timestamp">[${time}]</span><span class="username">&lt;anonymous&gt;</span><span class="message">${typingArea.textContent}</span>`;
       chatLog.appendChild(li);
       typingArea.textContent = '';
-      window.scrollTo(0, document.body.scrollHeight);
+      const win = document.querySelector('.irc-window');
+      win.scrollTop = win.scrollHeight;
     }
 
-    window.onload = function() { setTimeout(typeWriter, 1000); };
+    function updateSystemStatus() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const resText = `RES: ${width}x${height}`;
+      document.getElementById('sys-res').textContent = resText;
+    }
+
+    window.onload = function() {
+      updateSystemStatus();
+      setTimeout(typeWriter, 800);
+    };
+    
+    window.onresize = updateSystemStatus;
   </script>
 </Layout>
