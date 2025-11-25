@@ -32,6 +32,11 @@ import Layout from '../layouts/Layout.astro';
       display: flex;
       align-items: center;
       justify-content: center;
+      
+      /* FONT RENDERING FIXES FOR ASCII ALIGNMENT */
+      -webkit-font-smoothing: none;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeSpeed; 
     }
 
     /* --- THE TERMINAL CONTAINER --- */
@@ -72,9 +77,10 @@ import Layout from '../layouts/Layout.astro';
       
       .ascii-desktop { display: none; }
       
-      /* MOBILE ASCII FIX:
-         We switch to block display with left alignment to keep the art grid intact,
-         then use auto margins to center the block itself. */
+      /* MOBILE ASCII FIX: 
+         Left align content to keep grid perfect, 
+         Center the block itself using margins. 
+      */
       .ascii-mobile { 
         display: block; 
         text-align: left; 
@@ -91,17 +97,22 @@ import Layout from '../layouts/Layout.astro';
       white-space: pre;
       color: var(--term-green);
       line-height: 1;
-      font-weight: bold;
+      
+      /* CRITICAL FIX: Remove bold to prevent mobile skew */
+      font-weight: normal; 
+      letter-spacing: 0px;
+      font-variant-ligatures: none;
+      
       flex-shrink: 0;
       
       /* Dynamic Scaling */
       font-size: clamp(10px, 2.5vw, 14px); 
     }
     
-    /* Desktop specific alignment */
     .ascii-desktop {
       text-align: center;
       margin: 15px 0;
+      font-weight: bold; /* Desktop can handle bold */
     }
 
     /* --- IRC CHAT ENGINE --- */
@@ -226,12 +237,12 @@ import Layout from '../layouts/Layout.astro';
 
         <div class="file-row">
           <span>> PROTOCOL_DEFENSE (OPT_OUT).sh</span>
-          <a href="https://tally.so/r/PddzN5" target="_blank" class="download-link">[ HARDEN ]</a>
+          <a href="https://tally.so/r/PddzN5" target="_blank" class="download-link">[ HARDEN SYSTEM ]</a>
         </div>
 
         <div class="file-row">
           <span>> SANCTUARY_ACCESS.key</span>
-          <a href="https://tally.so/r/Y554b5" target="_blank" class="download-link">[ SOLVE ]</a>
+          <a href="https://tally.so/r/Y554b5" target="_blank" class="download-link">[ SOLVE RIDDLE ]</a>
         </div>
       </div>
     </div>
@@ -245,7 +256,7 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script is:inline>
-    // TYPEWRITER ENGINE (Restored Text)
+    // TYPEWRITER ENGINE (Restored Original Narrative)
     const scriptLines = [
       "Initializing secure connection...",
       "Connection established to #cypherpunk-cafe.",
