@@ -69,8 +69,19 @@ import Layout from '../layouts/Layout.astro';
         border-top: 2px solid var(--term-green);
         border-bottom: 2px solid var(--term-green);
       }
+      
       .ascii-desktop { display: none; }
-      .ascii-mobile { display: block; }
+      
+      /* MOBILE ASCII FIX:
+         We switch to block display with left alignment to keep the art grid intact,
+         then use auto margins to center the block itself. */
+      .ascii-mobile { 
+        display: block; 
+        text-align: left; 
+        width: fit-content; 
+        margin: 15px auto; 
+      }
+      
       body { font-size: 14px; }
     }
 
@@ -79,14 +90,18 @@ import Layout from '../layouts/Layout.astro';
       font-family: var(--font-stack);
       white-space: pre;
       color: var(--term-green);
-      text-align: center;
       line-height: 1;
-      margin: 15px 0;
       font-weight: bold;
       flex-shrink: 0;
       
       /* Dynamic Scaling */
-      font-size: clamp(8px, 2vw, 14px); 
+      font-size: clamp(10px, 2.5vw, 14px); 
+    }
+    
+    /* Desktop specific alignment */
+    .ascii-desktop {
+      text-align: center;
+      margin: 15px 0;
     }
 
     /* --- IRC CHAT ENGINE --- */
@@ -230,24 +245,25 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script is:inline>
-    // TYPEWRITER ENGINE
+    // TYPEWRITER ENGINE (Restored Text)
     const scriptLines = [
-      "Boot sequence initiated...",
-      "Resolving host... cypherpunk.fyi found.",
+      "Initializing secure connection...",
+      "Connection established to #cypherpunk-cafe.",
       "...",
-      "Identity: [Redacted]. Handle: 'Wizard'.",
-      "Mission: Breaking the digital siege.",
-      "Status: The systems are rigged. The 'free' tools are traps.",
+      "My name is [Redacted]. Some know me as 'Wizard'.",
+      "I've spent a lifetime inside the source code of the world.",
+      "I've seen the traps. The $2,000 courses. The 'free' tools.",
+      "They are systems designed to lock you in.",
       "...",
       "The real hack isn't code. It's SOVEREIGNTY.",
       "We are launching the Exit & Build protocols.",
       "This is not a course. This is a sanctuary.",
-      "Choose your path.",
+      "Choose your path below.",
       "EOF."
     ];
 
     const typingSpeed = 25; 
-    const lineDelay = 250;
+    const lineDelay = 350;
     let lineIndex = 0;
     let charIndex = 0;
     const typingArea = document.getElementById('typing-area');
