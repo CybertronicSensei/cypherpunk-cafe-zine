@@ -6,7 +6,7 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="Cypherpunk Café" description="The Exit & Build Sanctuary">
   
   <style>
-    /* --- THE KERNEL: CORE VARIABLES --- */
+    /* --- THE KERNEL --- */
     @import url('https://fonts.cdnfonts.com/css/perfect-dos-vga-437');
 
     :root {
@@ -14,10 +14,8 @@ import Layout from '../layouts/Layout.astro';
       --term-green: #33FF00;
       --term-dim: #008F11;
       --font-stack: 'Perfect DOS VGA 437', monospace;
-      --crt-scanline: rgba(18, 16, 16, 0.1);
     }
 
-    /* --- GLOBAL RESET --- */
     * { box-sizing: border-box; }
 
     body {
@@ -33,13 +31,11 @@ import Layout from '../layouts/Layout.astro';
       align-items: center;
       justify-content: center;
       
-      /* FONT RENDERING FIXES FOR ASCII ALIGNMENT */
+      /* RENDER FIXES */
       -webkit-font-smoothing: none;
-      -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeSpeed; 
     }
 
-    /* --- THE TERMINAL CONTAINER --- */
     .nfo-box {
       width: 100%;
       max-width: 900px;
@@ -53,7 +49,18 @@ import Layout from '../layouts/Layout.astro';
       animation: flicker 0.15s infinite;
     }
 
-    /* --- RESPONSIVE LOGIC --- */
+    /* --- BINARY HEADER --- */
+    .binary-header {
+      font-size: 10px;
+      color: var(--term-dim);
+      text-align: center;
+      padding: 5px 0;
+      word-break: break-all;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--term-dim);
+    }
+
+    /* --- RESPONSIVE DISPLAY LOGIC --- */
     .ascii-desktop { display: block; }
     .ascii-mobile { display: none; }
     
@@ -65,7 +72,7 @@ import Layout from '../layouts/Layout.astro';
       flex-grow: 1;
     }
 
-    /* MOBILE MODE (< 800px) */
+    /* MOBILE OVERRIDES (< 800px) */
     @media (max-width: 800px) {
       .nfo-box {
         max-width: 100%;
@@ -74,48 +81,35 @@ import Layout from '../layouts/Layout.astro';
         border-top: 2px solid var(--term-green);
         border-bottom: 2px solid var(--term-green);
       }
-      
       .ascii-desktop { display: none; }
       
-      /* MOBILE ASCII FIX: 
-         Left align content to keep grid perfect, 
-         Center the block itself using margins. 
-      */
+      /* MOBILE ART SETTINGS */
       .ascii-mobile { 
         display: block; 
-        text-align: left; 
-        width: fit-content; 
-        margin: 15px auto; 
+        margin: 10px auto; 
+        /* Crucial: This ensures 40 chars fit on a 320px screen */
+        font-size: 1.7vw; 
+        line-height: 1.1;
       }
       
       body { font-size: 14px; }
     }
 
-    /* --- ASCII ART ENGINE --- */
     .ascii-art {
       font-family: var(--font-stack);
       white-space: pre;
       color: var(--term-green);
-      line-height: 1;
-      
-      /* CRITICAL FIX: Remove bold to prevent mobile skew */
-      font-weight: normal; 
-      letter-spacing: 0px;
-      font-variant-ligatures: none;
-      
+      font-weight: normal; /* No bold to prevent skew */
       flex-shrink: 0;
-      
-      /* Dynamic Scaling */
-      font-size: clamp(10px, 2.5vw, 14px); 
     }
     
     .ascii-desktop {
       text-align: center;
       margin: 15px 0;
-      font-weight: bold; /* Desktop can handle bold */
+      font-size: clamp(10px, 2.5vw, 14px); 
     }
 
-    /* --- IRC CHAT ENGINE --- */
+    /* CHAT STYLES */
     .irc-header {
       background: var(--term-green);
       color: #000;
@@ -126,24 +120,12 @@ import Layout from '../layouts/Layout.astro';
       flex-shrink: 0;
     }
 
-    #chat-log {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      margin-bottom: 20px;
-    }
-
-    .msg-line {
-      margin-bottom: 10px;
-      line-height: 1.4;
-      display: block;
-      word-wrap: break-word;
-    }
-
+    #chat-log { list-style: none; padding: 0; margin: 0; margin-bottom: 20px; }
+    .msg-line { margin-bottom: 10px; line-height: 1.4; display: block; word-wrap: break-word; }
     .timestamp { color: var(--term-dim); margin-right: 8px; }
     .username { color: #FFF; margin-right: 5px; }
 
-    /* --- LINKS --- */
+    /* LINKS */
     .file-transfer {
       margin-top: 20px;
       border: 1px dashed var(--term-green);
@@ -176,7 +158,6 @@ import Layout from '../layouts/Layout.astro';
     }
     a.download-link:hover { background: #FFF; }
 
-    /* --- FOOTER --- */
     .sys-status {
       margin-top: auto;
       border-top: 1px solid var(--term-dim);
@@ -187,16 +168,17 @@ import Layout from '../layouts/Layout.astro';
       justify-content: space-between;
     }
 
-    /* --- ANIMATIONS --- */
     .cursor::after { content: "█"; animation: blink 1s step-end infinite; }
     @keyframes blink { 50% { opacity: 0; } }
-    @keyframes flicker { 
-      0% { opacity: 0.97; } 50% { opacity: 1; } 100% { opacity: 0.98; } 
-    }
+    @keyframes flicker { 0% { opacity: 0.97; } 50% { opacity: 1; } 100% { opacity: 0.98; } }
   </style>
 
   <main class="nfo-box">
     
+    <div class="binary-header">
+      01000011 01111001 01110000 01101000 01100101 01110010 01010000 01110101 01101110 01101011 01000011 01100001 01100110 01100101 
+    </div>
+
     <div class="ascii-art ascii-desktop">
  ██████╗██╗   ██╗██████╗ ██╗  ██╗███████╗██████╗ ██████╗ ██╗   ██╗███╗   ██╗██╗  ██╗
 ██╔════╝╚██╗ ██╔╝██╔══██╗██║  ██║██╔════╝██╔══██╗██╔══██╗██║   ██║████╗  ██║██║ ██╔╝
@@ -207,10 +189,12 @@ import Layout from '../layouts/Layout.astro';
     </div>
 
     <div class="ascii-art ascii-mobile">
-▄▖    ▌     ▄▖    ▌ ▄▖  ▐▘  
-▌ ▌▌▛▌▛▌█▌▛▘▙▌▌▌▛▌▙▘▌ ▀▌▜▘█▌
-▙▖▙▌▙▌▌▌▙▖▌ ▌ ▙▌▌▌▛▖▙▖█▌▐ ▙▖
-  ▄▌▌                       
+░█▀▀░█░█░█▀█░█░█░█▀▀░█▀▄░█▀█░█░█░█▀█░█░█
+░█░░░░█░░█▀▀░█▀█░█▀▀░█▀▄░█▀▀░█░█░█░█░█▀▄
+░▀▀▀░░▀░░▀░░░▀░▀░▀▀▀░▀░▀░▀░░░▀▀▀░▀░▀░▀░▀
+░█▀▀░█▀█░█▀▀░█▀▀                        
+░█░░░█▀█░█▀▀░█▀▀                        
+░▀▀▀░▀░▀░▀░░░▀▀▀                        
     </div>
 
     <div class="irc-window">
@@ -237,12 +221,12 @@ import Layout from '../layouts/Layout.astro';
 
         <div class="file-row">
           <span>> PROTOCOL_DEFENSE (OPT_OUT).sh</span>
-          <a href="https://tally.so/r/PddzN5" target="_blank" class="download-link">[ HARDEN SYSTEM ]</a>
+          <a href="https://tally.so/r/PddzN5" target="_blank" class="download-link">[ HARDEN ]</a>
         </div>
 
         <div class="file-row">
           <span>> SANCTUARY_ACCESS.key</span>
-          <a href="https://tally.so/r/Y554b5" target="_blank" class="download-link">[ SOLVE RIDDLE ]</a>
+          <a href="https://tally.so/r/Y554b5" target="_blank" class="download-link">[ SOLVE ]</a>
         </div>
       </div>
     </div>
@@ -256,7 +240,6 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script is:inline>
-    // TYPEWRITER ENGINE (Restored Original Narrative)
     const scriptLines = [
       "Initializing secure connection...",
       "Connection established to #cypherpunk-cafe.",
